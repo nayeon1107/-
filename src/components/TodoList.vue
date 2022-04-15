@@ -2,14 +2,25 @@
   <section>
     <transition-group name="list" tag="ul">
       <li v-for="(todoItem, index) in propsdata" :key="todoItem" class="shadow">
-        <i class="checkBtn fas fa-check" aria-hidden="true" @click="updateState(todoItem)"></i>
-        <span :class="{textCompleted:doneItems[index]}"> {{ todoItem }} </span>
+        <div v-if="doneItems[index]"><img id="doneIcon" src="..\src\assets\flower.png" width="25" height="25" class="doneIcon" aria-hidden="true" @click="updateState(todoItem)"></div>
+        <div v-else><img id="doneIcon" src="..\src\assets\seed.png" width="25" height="25" class="doneIcon" aria-hidden="true" @click="updateState(todoItem)"></div>
+        <input style="outline:none; border-style:none;" :class="{textCompleted:doneItems[index]}" :placeholder="todoItem" v-model="editedTodoItem[index]" @keyup.enter="editTodo(todoItem,index)">
         <span class="detailBtn" type="button" @click="showDetailModal(todoItem,index)">
           <i class="fas fa-ellipsis-v"></i>
         </span>
-        <modal v-if="DetailModal" @close="DetailModal = false">
-          <h3 slot="header">Detail</h3>
-          <span slot="footer" @click="DetailModal = false">내용 블라블라
+
+        <modal v-if="DetailModal" @close="DetailModal = false" >
+          <h2 slot="header"> {{DetailTodo}} </h2>
+          <div slot="content">
+            <br>마감기한
+            <input type="text" v-model="deadline" placeholder="마감기한을 입력하세요">
+            <br>장소
+            <input type="text" v-model="place" placeholder="장소를 입력하세요">
+          </div>
+          <span slot="footer" @click="addDetailTodo(DetailTodo,deadline,place)">
+            <i class="addDetailBtn fas fa-plus" aria-hidden="true"></i>
+          </span>
+          <span slot="footer" @click="DetailModal = false">
             <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
           </span>
         </modal>
@@ -26,18 +37,21 @@
 import Modal from './common/DetailModal.vue'
 
 
-
 export default {
   data(){
     return{
       DetailModal: false,
+      DetailTodo: '',
+      place:'',
+      deadline:'',
+      editedTodoItem: [],
       doneItems: []
-      
     }
   }
   ,
 
   props: ['propsdata'],
+
   methods: {
     removeTodo(todoItem, index) {
       this.$emit('removeTodo', todoItem, index);
@@ -45,7 +59,11 @@ export default {
     updateState(todoItem, doneItems){
       var items=JSON.parse(localStorage.getItem(todoItem))
       items.done=!items.done
+      if (items.done==true) {
+        document.getElementById("doneIcon").src.replace("seed.png", "flower.png")
+      }
       localStorage.setItem(todoItem,JSON.stringify(items))
+
       this.doneItems=[]
 			for (var i = 0; i < localStorage.length; i++) {
         var item=JSON.parse(localStorage.getItem(localStorage.key(i)))
@@ -55,16 +73,34 @@ export default {
       
     },
 
-    
     showDetailModal(todoItem, index){
       this.$emit('showDetailModal',todoItem,index)
-      this.DetailModal=!this.DetailModal;
-    }
-  },
+      this.DetailModal=!this.DetailModal
+      this.DetailTodo=todoItem
+    },
+    addDetailTodo(DetailTodo,deadline,place){
+      this.DetailModal=false
+      this.todoItem=DetailTodo
+      var items={done : false , deadline: deadline, place: place}
+      localStorage.setItem(DetailTodo,JSON.stringify(items))
+    },
+    editTodo(todoItem,index){
+      if (this.editedTodoItem[index] !== undefined) {
+        console.log(this.editedTodoItem[index])
+        var value = this.editedTodoItem[index] && this.editedTodoItem[index].trim();
+				this.$emit('editTodo',index,todoItem,value)
+        this.editedTodoItem= [];
+      } else {
+        // this.DetailModal=!this.DetailModal 공백 입력시 modal창을 등장시켜라!;
+      }
 
+  }}
+  ,
   components: {
     Modal: Modal
+
   }
+  
 
 }
 </script>
@@ -95,6 +131,9 @@ export default {
     margin-left: 10px;
     color: #de4343;
   }
+  .doneIcon {
+    margin-left:0px
+  }
   .textCompleted {
     text-decoration: line-through;
     color: #b3adad;
@@ -106,5 +145,11 @@ export default {
   .list-enter, .list-leave-to {
     opacity: 0;
     transform: translateY(30px);
+  }
+  .list-todoItem{
+    outline: none;
+    border-style: none;
+    transition: opacity 1s;
+  /* font-size: 0.9rem; */
   }
 </style>
