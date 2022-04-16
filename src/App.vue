@@ -3,7 +3,7 @@
     <TodoHeader></TodoHeader>
     <TodoInput v-on:addTodo="addTodo"></TodoInput>
     <TodoList v-bind:propsdata="todoItems"  v-bind:propsIdx="todoItems_Idx" v-bind:propsDone="doneItems" v-bind:propsDate="ddate" @removeTodo="removeTodo" @editTodo="editTodo" @updateState="updateState"></TodoList>
-    <TodoFooter v-on:removeAll="clearAll"></TodoFooter>
+    <TodoFooter v-on:removeAll="clearAll" v-bind:propsDone="doneItems"></TodoFooter>
   </div>
 </template>
 
@@ -42,6 +42,7 @@ export default {
       localStorage.removeItem(keyIdx);
       this.todoItems.splice(index, 1);
       this.todoItems_Idx.splice(index, 1);
+      this.doneItems.splice(index, 1);
       this.ddate.splice(index, 1);
     },
     editTodo(keyIdx,index,editedTodoItem){
