@@ -112,7 +112,7 @@ export default {
         } else if (this.dday < 0) {
           this.ddate.splice(DetailIndex,1,'')
         } else {this.ddate.splice(DetailIndex,1,'D-day')}
-      }
+      } else {this.ddate.splice(DetailIndex,1,'')}
 
       var items={todo :this.propsdata[DetailIndex], done : this.done , deadline: this.deadline, dday: this.ddate[DetailIndex], place: this.place, memo: this.memo, category: this.category}
       localStorage.setItem(keyIdx,JSON.stringify(items))

@@ -44,11 +44,6 @@ export default {
       this.$emit('removeAll');
       this.showClearAlertModal=!this.showClearAlertModal;
     },
-    // CalculateUndone() {
-    //   var undone = this.propsDone
-    //   undone = undone.filter(item => item === false).length
-    //   return undone
-    // }
   },
   computed: {
     doneLeft: function() {
