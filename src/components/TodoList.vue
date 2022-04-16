@@ -2,30 +2,41 @@
   <section>
     <transition-group name="list" tag="ul">
       <li v-for="(todoItem, index) in propsdata" :key="todoItem" class="shadow">
-        <div v-if="doneItems[index]"><img id="doneIcon" src="..\src\assets\flower.png" width="25" height="25" class="doneIcon" aria-hidden="true" @click="updateState(todoItem)"></div>
-        <div v-else><img id="doneIcon" src="..\src\assets\seed.png" width="25" height="25" class="doneIcon" aria-hidden="true" @click="updateState(todoItem)"></div>
-        <input style="outline:none; border-style:none;" :class="{textCompleted:doneItems[index]}" :placeholder="todoItem" v-model="editedTodoItem[index]" @keyup.enter="editTodo(todoItem,index)">
-        <span class="detailBtn" type="button" @click="showDetailModal(todoItem,index)">
+        <span type="button" aria-hidden="true" @click="updateState(index)"><img v-if=propsDone[index] src="..\src\assets\flower.png" width="25" height="25" align='center'><img v-else src="..\src\assets\seed.png" width="25" height="25" align='center'></span>
+        <input :class="{textCompleted:propsDone[index]}" style="outline: none;border-style: none;" :placeholder="todoItem" v-model="editedTodoItem[index]" @keyup.enter="editTodo(index)">
+        <div class="dday"> {{propsDate[index]}} </div>
+        <span class="detailBtn" type="button" @click="showDetailModal(index)">
           <i class="fas fa-ellipsis-v"></i>
         </span>
 
-        <modal v-if="DetailModal" @close="DetailModal = false" >
-          <h2 slot="header"> {{DetailTodo}} </h2>
-          <div slot="content">
-            <br>마감기한
-            <input type="text" v-model="deadline" placeholder="마감기한을 입력하세요">
-            <br>장소
-            <input type="text" v-model="place" placeholder="장소를 입력하세요">
-          </div>
-          <span slot="footer" @click="addDetailTodo(DetailTodo,deadline,place)">
-            <i class="addDetailBtn fas fa-plus" aria-hidden="true"></i>
-          </span>
-          <span slot="footer" @click="DetailModal = false">
+        <EditAlertModal v-if="showEditAlertModal" @close="showEditAlertModal = false">
+          <h3 slot="header">경고</h3>
+         <span slot="footer" @click="showEditAlertModal = false">할 일을 입력하세요.
             <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
-          </span>
-        </modal>
+         </span>
+        </EditAlertModal> 
 
-        <span class="removeBtn" type="button" @click="removeTodo(todoItem, index)">
+        <DetailModal v-if="TFDetailModal" @close="TFDetailModal = false">
+          <h2 slot="header"> {{propsdata[DetailIndex]}} </h2>
+          <div slot="content">
+            <br>카테고리
+              <input type="text" v-model="category" placeholder="카테고리를 선택하세요">
+            <br>마감기한
+              <input type="date" id="deadline" v-model="deadline">
+            <br>장소
+              <input type="text" v-model="place">
+            <br>메모
+              <input type="text" v-model="memo">
+          </div>
+          <span slot="footer" @click="addDetailTodo(DetailIndex,deadline,place,memo,category)">
+            <span class="saveDetailBtn" >SAVE</span>
+          </span>
+          <span slot="footer" @click="TFDetailModal = false">
+            <span class="closeDetailBtn" >CLOSE</span>
+          </span>
+        </DetailModal>
+
+        <span class="removeBtn" type="button" @click="removeTodo(index)">
           <i class="far fa-trash-alt" aria-hidden="true"></i>
         </span>
       </li>
@@ -34,70 +45,103 @@
 </template>
 
 <script>
-import Modal from './common/DetailModal.vue'
+import DetailModal from './common/DetailModal.vue'
+import EditAlertModal from './common/EditAlertModal.vue'
 
 
 export default {
   data(){
     return{
-      DetailModal: false,
+      TFDetailModal: false,
+      showEditAlertModal: false,
       DetailTodo: '',
       place:'',
       deadline:'',
+      memo:'',
+      category:'',
+      done:'',
+      //카테고리 라디오버튼 할때 빼기
       editedTodoItem: [],
-      doneItems: []
+      doneItems: [],
+      ddate: []
     }
   }
   ,
-
-  props: ['propsdata'],
+  props: ['propsdata','propsIdx','propsDone','propsDate'],
 
   methods: {
-    removeTodo(todoItem, index) {
-      this.$emit('removeTodo', todoItem, index);
+    removeTodo(index) {
+      var keyIdx=this.propsIdx[index]
+      this.$emit('removeTodo',keyIdx,index);
     },
-    updateState(todoItem, doneItems){
-      var items=JSON.parse(localStorage.getItem(todoItem))
-      items.done=!items.done
-      if (items.done==true) {
-        document.getElementById("doneIcon").src.replace("seed.png", "flower.png")
-      }
-      localStorage.setItem(todoItem,JSON.stringify(items))
-
-      this.doneItems=[]
-			for (var i = 0; i < localStorage.length; i++) {
-        var item=JSON.parse(localStorage.getItem(localStorage.key(i)))
-        this.doneItems.push(item["done"])
-      }
-      this.$emit('clearAll', doneItems)
+    updateState(index){
+      var keyIdx=this.propsIdx[index]
+      this.$emit('updateState',keyIdx,index);
+    },
+    // updateState(todoItem){
+    //   var items=JSON.parse(localStorage.getItem(todoItem))
+    //   items.done=!items.done
+    //   localStorage.setItem(todoItem,JSON.stringify(items))
+    //   console.log(todoItem.done)
+    // } ,
+    
+    showDetailModal(index){
+      // this.$emit('showDetailModal',index)
+      this.TFDetailModal=!this.TFDetailModal
+      this.DetailIndex=index
       
+      var items =JSON.parse(localStorage.getItem(this.propsIdx[index]))
+      this.done=items.done
+      this.place=items.place
+      this.deadline=items.deadline
+      this.memo=items.memo
+      this.category=items.category
     },
+    addDetailTodo(DetailIndex){
+      this.TFDetailModal=false
+      var keyIdx=this.propsIdx[DetailIndex]
 
-    showDetailModal(todoItem, index){
-      this.$emit('showDetailModal',todoItem,index)
-      this.DetailModal=!this.DetailModal
-      this.DetailTodo=todoItem
+      this.ddate = this.propsDate
+      if (this.deadline.length > 0) {
+        var today = new Date().getTime()
+        var deaddate = new Date(this.deadline.split("-")[0],this.deadline.split("-")[1]-1,this.deadline.split("-")[2]).getTime()
+        this.dday = deaddate - today
+        this.dday = Math.ceil((this.dday) / (1000*60*60*24))
+        if (this.dday > 0) {
+          this.ddate.splice(DetailIndex,1,("D-"+this.dday))
+        } else if (this.dday < 0) {
+          this.ddate.splice(DetailIndex,1,'')
+        } else {this.ddate.splice(DetailIndex,1,'D-day')}
+      }
+
+      var items={todo :this.propsdata[DetailIndex], done : this.done , deadline: this.deadline, dday: this.ddate[DetailIndex], place: this.place, memo: this.memo, category: this.category}
+      localStorage.setItem(keyIdx,JSON.stringify(items))
+
+      this.clearInput()
+
     },
-    addDetailTodo(DetailTodo,deadline,place){
-      this.DetailModal=false
-      this.todoItem=DetailTodo
-      var items={done : false , deadline: deadline, place: place}
-      localStorage.setItem(DetailTodo,JSON.stringify(items))
+    clearInput(){
+      this.place='';
+      this.deadline='';
+      this.done=''
+      this.memo=''
+      this.category=''
     },
-    editTodo(todoItem,index){
+    editTodo(index){
       if (this.editedTodoItem[index] !== undefined) {
-        console.log(this.editedTodoItem[index])
         var value = this.editedTodoItem[index] && this.editedTodoItem[index].trim();
-				this.$emit('editTodo',index,todoItem,value)
+        var keyIdx=this.propsIdx[index]
+				this.$emit('editTodo',keyIdx,index,value)
         this.editedTodoItem= [];
       } else {
-        // this.DetailModal=!this.DetailModal 공백 입력시 modal창을 등장시켜라!;
+        this.showEditAlertModal=!this.showEditAlertModal
       }
 
   }}
   ,
   components: {
-    Modal: Modal
+    DetailModal: DetailModal,
+    EditAlertModal: EditAlertModal
 
   }
   
@@ -105,7 +149,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   ul {
     list-style-type: none;
     padding-left: 0px;
@@ -131,16 +175,15 @@ export default {
     margin-left: 10px;
     color: #de4343;
   }
-  .doneIcon {
-    margin-left:0px
-  }
   .textCompleted {
     text-decoration: line-through;
     color: #b3adad;
   }
 
+
+
   .list-enter-active, .list-leave-active {
-    transition: all 1s;
+    /* transition: all 1s; */
   }
   .list-enter, .list-leave-to {
     opacity: 0;
@@ -151,5 +194,9 @@ export default {
     border-style: none;
     transition: opacity 1s;
   /* font-size: 0.9rem; */
+  }
+  .dday {
+    font-size: 0.4rem;
+    color:cadetblue;  
   }
 </style>

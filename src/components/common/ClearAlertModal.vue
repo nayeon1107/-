@@ -9,6 +9,11 @@
             </slot>
           </div>
 
+          <div class="modal-content">
+            <slot name="content">
+            </slot>
+          </div>
+
           <div class="modal-footer">
             <slot name="footer">
               <!--  -->
@@ -21,9 +26,7 @@
 </template>
 
 <style lang="css">
-.closeModalBtn {
-  color: rgb(102, 103, 171);
-}
+
 .modal-mask {
   position: fixed;
   z-index: 9998;
@@ -43,6 +46,7 @@
 
 .modal-container {
   width: 300px;
+  height: 175px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
@@ -56,7 +60,9 @@
   margin-top: 0;
   color: rgb(102, 103, 171);
 }
-
+.modal-content {
+  margin: 0;
+}
 .modal-body {
   margin: 20px 0;
 }
