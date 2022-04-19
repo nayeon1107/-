@@ -1,46 +1,50 @@
 <template>
   <section>
-    <transition-group name="list" tag="ul">
-      <li v-for="(todoItem, index) in propsdata" :key="todoItem" class="shadow">
-        <span type="button" aria-hidden="true" @click="updateState(index)"><img v-if=propsDone[index] src="..\src\assets\flower.png" width="25" height="25" align='center'><img v-else src="..\src\assets\seed.png" width="25" height="25" align='center'></span>
-        <input :class="{textCompleted:propsDone[index]}" style="outline: none;border-style: none;" :placeholder="todoItem" v-model="editedTodoItem[index]" @keyup.enter="editTodo(index)">
-        <div class="dday"> {{propsDate[index]}} </div>
-        <span class="detailBtn" type="button" @click="showDetailModal(index)">
-          <i class="fas fa-ellipsis-v"></i>
-        </span>
-
-        <EditAlertModal v-if="showEditAlertModal" @close="showEditAlertModal = false">
-          <h3 slot="header">경고</h3>
-         <span slot="footer" @click="showEditAlertModal = false">할 일을 입력하세요.
-            <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
-         </span>
-        </EditAlertModal> 
-
-        <DetailModal v-if="TFDetailModal" @close="TFDetailModal = false">
-          <h2 slot="header"> {{propsdata[DetailIndex]}} </h2>
-          <div slot="content">
-            <br>카테고리
-              <input type="text" v-model="category" placeholder="카테고리를 선택하세요">
-            <br>마감기한
-              <input type="date" id="deadline" v-model="deadline">
-            <br>장소
-              <input type="text" v-model="place">
-            <br>메모
-              <input type="text" v-model="memo">
-          </div>
-          <span slot="footer" @click="addDetailTodo(DetailIndex,deadline,place,memo,category)">
-            <span class="saveDetailBtn" >SAVE</span>
+    <ol name="list_cate">
+      <div v-for="cate in propsCate" :key="cate" class="shadow" >
+        <span style='border:solid 1px grey'>{{cate}}</span>
+      <transition-group name="list" tag="ul">
+        <li v-for="(todoItem, index) in propsdata" :key="todoItem" class="shadow" v-show='propsTodoCate[index]==cate'>
+          <span type="button" aria-hidden="true" @click="updateState(index)"><img v-if=propsDone[index] src="..\src\assets\flower.png" width="25" height="25" align='center'><img v-else src="..\src\assets\seed.png" width="25" height="25" align='center'></span>
+          <input :class="{textCompleted:propsDone[index]}" style="outline: none;border-style: none;" :placeholder="todoItem" v-model="editedTodoItem[index]" @keyup.enter="editTodo(index)">
+          <div class="dday"> {{propsDate[index]}} </div>
+          <span class="detailBtn" type="button" @click="showDetailModal(index)">
+            <i class="fas fa-ellipsis-v"></i>
           </span>
-          <span slot="footer" @click="TFDetailModal = false">
-            <span class="closeDetailBtn" >CLOSE</span>
-          </span>
-        </DetailModal>
 
-        <span class="removeBtn" type="button" @click="removeTodo(index)">
-          <i class="far fa-trash-alt" aria-hidden="true"></i>
-        </span>
-      </li>
-    </transition-group>
+          <EditAlertModal v-if="showEditAlertModal" @close="showEditAlertModal = false">
+            <h3 slot="header">경고</h3>
+          <span slot="footer" @click="showEditAlertModal = false">할 일을 입력하세요.
+              <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
+          </span>
+          </EditAlertModal> 
+
+          <DetailModal v-if="TFDetailModal" @close="TFDetailModal = false">
+            <h2 slot="header"> {{propsdata[DetailIndex]}} </h2>
+            <div slot="content">
+              <br>카테고리
+                <input type="text" v-model="category" placeholder="카테고리를 선택하세요">
+              <br>마감기한
+                <input type="date" id="deadline" v-model="deadline">
+              <br>장소
+                <input type="text" v-model="place">
+              <br>메모
+                <input type="text" v-model="memo">
+            </div>
+            <span slot="footer" @click="addDetailTodo(DetailIndex,deadline,place,memo,category)">
+              <span class="saveDetailBtn" >SAVE</span>
+            </span>
+            <span slot="footer" @click="TFDetailModal = false">
+              <span class="closeDetailBtn" >CLOSE</span>
+            </span>
+          </DetailModal>
+
+          <span class="removeBtn" type="button" @click="removeTodo(index)">
+            <i class="far fa-trash-alt" aria-hidden="true"></i>
+          </span>
+        </li>
+      </transition-group>
+    </div></ol>
   </section>
 </template>
 
@@ -67,7 +71,7 @@ export default {
     }
   }
   ,
-  props: ['propsdata','propsIdx','propsDone','propsDate'],
+  props: ['propsdata','propsIdx','propsDone','propsDate','propsCate','propsTodoCate'],
 
   methods: {
     removeTodo(index) {
@@ -78,15 +82,9 @@ export default {
       var keyIdx=this.propsIdx[index]
       this.$emit('updateState',keyIdx,index);
     },
-    // updateState(todoItem){
-    //   var items=JSON.parse(localStorage.getItem(todoItem))
-    //   items.done=!items.done
-    //   localStorage.setItem(todoItem,JSON.stringify(items))
-    //   console.log(todoItem.done)
-    // } ,
+
     
     showDetailModal(index){
-      // this.$emit('showDetailModal',index)
       this.TFDetailModal=!this.TFDetailModal
       this.DetailIndex=index
       
@@ -115,7 +113,7 @@ export default {
       } else {this.ddate.splice(DetailIndex,1,'')}
 
       var items={todo :this.propsdata[DetailIndex], done : this.done , deadline: this.deadline, dday: this.ddate[DetailIndex], place: this.place, memo: this.memo, category: this.category}
-      localStorage.setItem(keyIdx,JSON.stringify(items))
+      localStorage.setItem(keyIdx, JSON.stringify(items))
 
       this.clearInput()
 
@@ -166,6 +164,13 @@ export default {
     background: white;
     border-radius: 5px;
   }
+  ol {
+    list-style-type: none;
+    padding-left: 0px;
+    margin-top: 10px;
+    text-align: left;
+  }
+
 
   .detailBtn {
     margin-left: auto;

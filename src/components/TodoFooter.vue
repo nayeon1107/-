@@ -1,7 +1,9 @@
 <template>
   <div class="clearAllContainer">
     <span class="clearAllBtn" @click="showClearModal">Clear All</span>
-    <div class="doneleft">할일 {{doneLeft}}개 남음!</div>
+    <div class="doneleft">
+      할일 {{doneLeft}}개 남음!
+    </div>
     <div class="pageContainer">
       <span class="allBtn">ALL</span>
       <span class="unfinishedBtn">UNFINISHED</span>
@@ -45,6 +47,7 @@ export default {
       this.showClearAlertModal=!this.showClearAlertModal;
     },
   },
+  
   computed: {
     doneLeft: function() {
       var undone = this.propsDone
@@ -52,6 +55,7 @@ export default {
       return undone.length
     }
   },
+
 
   components: {
     ClearAlertModal:ClearAlertModal
