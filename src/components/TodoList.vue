@@ -1,56 +1,75 @@
 <template>
   <section>
-    <ol name="list_cate">
-      <div v-for="cate in propsCate" :key="cate" class="shadow" >
-        <span style='border:solid 1px grey'>{{cate}}</span>
-      <transition-group name="list" tag="ul">
-        <li v-for="(todoItem, index) in propsdata" :key="todoItem" class="shadow" v-show='propsTodoCate[index]==cate'>
-          <span type="button" aria-hidden="true" @click="updateState(index)"><img v-if=propsDone[index] src="..\src\assets\flower.png" width="25" height="25" align='center'><img v-else src="..\src\assets\seed.png" width="25" height="25" align='center'></span>
-          <input :class="{textCompleted:propsDone[index]}" style="outline: none;border-style: none;" :placeholder="todoItem" v-model="editedTodoItem[index]" @keyup.enter="editTodo(index)">
-          <div class="dday"> {{propsDate[index]}} </div>
-          <span class="detailBtn" type="button" @click="showDetailModal(index)">
-            <i class="fas fa-ellipsis-v"></i>
-          </span>
+    <ol name="list_cate" >
+      <div v-for="(cate,cateidx) in propsCate" :key="cate">
+        <p :key="cateidx"> <span class='catebox' :style={color:propsColor[cate]}> {{cate}}</span>
+          <span class="categorydetailBtn fas fa-cog" type="button" @click="showEditCategoryModal(cate)"></span>
+        </p>
+        <draggable>
+          <transition-group class="instruments" tag="ul">
+            <li v-for="(todoItem, index) in propsdata" :key="todoItem" class="shadow" v-show='propsTodoCate[index]==cate'>
+              <span type="button" aria-hidden="true" class="updatebutton" @click="updateState(index)"><img v-if=propsDone[index] src="..\src\assets\flower.png" width="25" height="25" align='center'><img v-else src="..\src\assets\seed.png" width="25" height="25" align='center'></span>
+              <input :class="{textCompleted:propsDone[index]}" style="outline: none;border-style: none;" :placeholder="todoItem" v-model="editedTodoItem[index]" @keyup.enter="editTodo(index)">
+              <div class="dday"> {{propsDate[index]}} </div>
+              <span class="detailBtn" type="button" @click="showDetailModal(index)">
+                <i class="fas fa-ellipsis-v"></i>
+              </span>
 
-          <EditAlertModal v-if="showEditAlertModal" @close="showEditAlertModal = false">
-            <h3 slot="header">경고</h3>
-          <span slot="footer" @click="showEditAlertModal = false">할 일을 입력하세요.
-              <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
-          </span>
-          </EditAlertModal> 
+              <EditAlertModal v-if="showEditAlertModal" @close="showEditAlertModal = false">
+                <h3 slot="header">경고</h3>
+                <span slot="footer" @click="showEditAlertModal = false">할 일을 입력하세요.
+                  <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
+                </span>
+              </EditAlertModal> 
 
-          <DetailModal v-if="TFDetailModal" @close="TFDetailModal = false">
-            <h2 slot="header"> {{propsdata[DetailIndex]}} </h2>
-            <div slot="content">
-              <br>카테고리
-                <input type="text" v-model="category" placeholder="카테고리를 선택하세요">
-              <br>마감기한
-                <input type="date" id="deadline" v-model="deadline">
-              <br>장소
-                <input type="text" v-model="place">
-              <br>메모
-                <input type="text" v-model="memo">
-            </div>
-            <span slot="footer" @click="addDetailTodo(DetailIndex,deadline,place,memo,category)">
-              <span class="saveDetailBtn" >SAVE</span>
-            </span>
-            <span slot="footer" @click="TFDetailModal = false">
-              <span class="closeDetailBtn" >CLOSE</span>
-            </span>
-          </DetailModal>
+              <DetailModal v-if="TFDetailModal" @close="TFDetailModal = false">
+                <h2 slot="header"> {{propsdata[DetailIndex]}} </h2>
+                <div slot="content">
+                  <br>카테고리
+                    <select class="categorybox" v-model="category">
+                      <option disabled value="" >카테고리를 선택하세요.</option>
+                      <option  v-for="(value,index) in propsCate" :key="index" :value="value"> {{propsCate[index]}} </option>
+                    </select> 
+                  <br>마감기한
+                    <input type="date" id="deadline" v-model="deadline">
+                  <br>장소
+                    <input type="text" v-model="place">
+                  <br>메모
+                    <input type="text" v-model="memo">
+                </div>
+                <span slot="footer" @click="addDetailTodo(DetailIndex,deadline,place,memo,category)">
+                  <span class="saveDetailBtn" >SAVE</span>
+                </span>
+                <span slot="footer" @click="TFDetailModal = false">
+                  <span class="closeDetailBtn" >CLOSE</span>
+                </span>
+              </DetailModal>
 
-          <span class="removeBtn" type="button" @click="removeTodo(index)">
-            <i class="far fa-trash-alt" aria-hidden="true"></i>
-          </span>
-        </li>
-      </transition-group>
+              <EditCategoryModal v-if="TFEditCategoryModal" @close="TFEditCategoryModal=false">
+                <h3 slot="header" class="pastCate">{{editpastCate}}</h3>
+                <div slot="content">
+                  <input type="text" v-model="editedCate" placeholder="카테고리 이름 수정">
+                </div>
+                <span slot="footer" class="EditCategoryBtn" @click="editCategory()">SAVE</span>
+                <span slot="footer" class="DeleteCategoryBtn" @click="TFEditCategoryModal = false">DELETE</span>
+              </EditCategoryModal>
+
+              <span class="removeBtn" type="button" @click="removeTodo(index)">
+                <i class="far fa-trash-alt" aria-hidden="true"></i>
+              </span>
+            </li>
+          </transition-group>
+          </draggable>
     </div></ol>
   </section>
 </template>
 
 <script>
+import draggable from 'vuedraggable'
+
 import DetailModal from './common/DetailModal.vue'
 import EditAlertModal from './common/EditAlertModal.vue'
+import EditCategoryModal from './common/EditCategoryModal.vue'
 
 
 export default {
@@ -58,20 +77,22 @@ export default {
     return{
       TFDetailModal: false,
       showEditAlertModal: false,
+      TFEditCategoryModal: false,
       DetailTodo: '',
       place:'',
       deadline:'',
       memo:'',
       category:'',
       done:'',
-      //카테고리 라디오버튼 할때 빼기
       editedTodoItem: [],
       doneItems: [],
-      ddate: []
+      ddate: [],
+      editpastCate:'',
+      editedCate:''
     }
   }
   ,
-  props: ['propsdata','propsIdx','propsDone','propsDate','propsCate','propsTodoCate'],
+  props: ['propsdata','propsIdx','propsDone','propsDate','propsCate','propsTodoCate','propsColor'],
 
   methods: {
     removeTodo(index) {
@@ -81,6 +102,7 @@ export default {
     updateState(index){
       var keyIdx=this.propsIdx[index]
       this.$emit('updateState',keyIdx,index);
+      console.log(document.getElementsByClassName('catebox')[1].innerHTML)
     },
 
     
@@ -94,6 +116,18 @@ export default {
       this.deadline=items.deadline
       this.memo=items.memo
       this.category=items.category
+    },
+    showEditCategoryModal(cate){
+      this.TFEditCategoryModal=!this.TFEditCategoryModal
+      this.editpastCate=cate
+
+      console.log('showEditCategoryModal',this.editpastCate)
+
+    },
+    editCategory(){
+      this.$emit('editCategory',this.editpastCate,this.editedCate)
+      console.log('list',this.editpastCate,this.editedCate)
+      this.TFEditCategoryModal=!this.TFEditCategoryModal
     },
     addDetailTodo(DetailIndex){
       this.TFDetailModal=false
@@ -116,6 +150,8 @@ export default {
       localStorage.setItem(keyIdx, JSON.stringify(items))
 
       this.clearInput()
+    
+      location.reload();
 
     },
     clearInput(){
@@ -135,11 +171,13 @@ export default {
         this.showEditAlertModal=!this.showEditAlertModal
       }
 
-  }}
-  ,
+  }},
+
   components: {
     DetailModal: DetailModal,
-    EditAlertModal: EditAlertModal
+    EditAlertModal: EditAlertModal,
+    EditCategoryModal: EditCategoryModal,
+    draggable
 
   }
   
@@ -169,6 +207,7 @@ export default {
     padding-left: 0px;
     margin-top: 10px;
     text-align: left;
+
   }
 
 
@@ -184,6 +223,12 @@ export default {
     text-decoration: line-through;
     color: #b3adad;
   }
+  .categorydetailBtn{
+    margin-top: 0;
+    float: right;
+    margin-right: 30px;
+  }
+
 
 
 
@@ -203,5 +248,10 @@ export default {
   .dday {
     font-size: 0.4rem;
     color:cadetblue;  
+  }
+  .catebox {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #6667ab;
   }
 </style>
