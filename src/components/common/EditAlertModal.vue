@@ -14,7 +14,7 @@
             </slot>
           </div>
 
-          <div class="modal-footer" >
+          <div class="modal-footer">
             <slot name="footer">
               <!--  -->
             </slot>
@@ -25,16 +25,11 @@
   </transition>
 </template>
 
-<style scope>
+<style lang="css">
 .closeModalBtn {
   color: rgb(102, 103, 171);
-  border-style: solid;
-  width: 7.5rem;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 5px;
-  float:right;
-  text-align: center;
+}
+.modal-footer{
   font-family: 'NanumBaReunHiPi';
 }
 .modal-mask {
@@ -62,16 +57,12 @@
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
-
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .modal-header h3 {
-
+  margin-top: 0;
   color: rgb(102, 103, 171);
-}
-.modal-content {
-  vertical-align: middle;
-  float:none;
 }
 
 .modal-body {

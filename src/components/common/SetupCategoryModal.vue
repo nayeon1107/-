@@ -2,19 +2,19 @@
   <transition name="modal">
     <div class="modal-mask" @keyup.esc="$emit('close')">
       <div class="modal-wrapper">
-        <div class="modal-container" style="height: 120px">
-          <div class="modal-header" style="margin-top:0">
+        <div class="modal-container" style="height:-300px">
+          <div class="modal-header" style="height:-100px" >
             <slot name="header">
-              <!--  -->
+
             </slot>
           </div>
+          <div class="modal-content" style="height=0;">
+              <slot name="content">
 
-          <div class="modal-content" style="height:50px;margin-top:30px">
-            <slot name="content">
-            </slot>
-          </div>
+              </slot>
+            </div>
 
-          <div class="modal-footer" >
+          <div class="modal-footer" style="">
             <slot name="footer">
               <!--  -->
             </slot>
@@ -25,17 +25,34 @@
   </transition>
 </template>
 
-<style scope>
+<style lang="css">
+.saveNewCategoryBtn{
+    font-family: 'NanumBaReunHiPi';
+    width: 7.5rem;
+    height: 40px;
+    line-height: 40px;
+    color: rgb(102, 103, 171);
+    border-radius: 5px;
+    float:left;
+    border-style: solid;
+    text-align: center;
+
+}
+.closeNewCategoryBtn{
+     font-family: 'NanumBaReunHiPi';
+    width: 7.5rem;
+    height: 40px;
+    line-height: 40px;
+    color: rgb(102, 103, 171);
+    border-radius: 5px;
+
+    float:right;
+    border-style: solid;
+    text-align: center;
+
+}
 .closeModalBtn {
   color: rgb(102, 103, 171);
-  border-style: solid;
-  width: 7.5rem;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 5px;
-  float:right;
-  text-align: center;
-  font-family: 'NanumBaReunHiPi';
 }
 .modal-mask {
   position: fixed;
@@ -62,16 +79,12 @@
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
-
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .modal-header h3 {
-
+  margin-top: 0;
   color: rgb(102, 103, 171);
-}
-.modal-content {
-  vertical-align: middle;
-  float:none;
 }
 
 .modal-body {

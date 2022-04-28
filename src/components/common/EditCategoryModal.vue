@@ -3,16 +3,16 @@
     <div class="modal-mask" @keyup.esc="$emit('close')">
       <div class="modal-wrapper">
         <div class="modal-container" style="height: 120px">
-          <div class="modal-header" style="margin-top:0">
+          <div class="modal-header" style="height:28%" >
             <slot name="header">
               <!--  -->
             </slot>
           </div>
+          <div class="modal-content" style="height:40%">
+              <slot name="content">
 
-          <div class="modal-content" style="height:50px;margin-top:30px">
-            <slot name="content">
-            </slot>
-          </div>
+              </slot>
+            </div>
 
           <div class="modal-footer" >
             <slot name="footer">
@@ -26,7 +26,19 @@
 </template>
 
 <style scope>
-.closeModalBtn {
+
+.EditCategoryBtn{
+  color: rgb(102, 103, 171);
+  border-style: solid;
+  width: 7.5rem;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 5px;
+  float:left;
+  text-align: center;
+  font-family: 'NanumBaReunHiPi';
+}
+.DeleteCategoryBtn{
   color: rgb(102, 103, 171);
   border-style: solid;
   width: 7.5rem;
@@ -36,6 +48,10 @@
   float:right;
   text-align: center;
   font-family: 'NanumBaReunHiPi';
+}
+.closeEditModalBtn{
+  color: rgb(102, 103, 171);
+  text-align: left;
 }
 .modal-mask {
   position: fixed;
@@ -62,16 +78,12 @@
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
-
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .modal-header h3 {
-
+  margin-top: 0;
   color: rgb(102, 103, 171);
-}
-.modal-content {
-  vertical-align: middle;
-  float:none;
 }
 
 .modal-body {

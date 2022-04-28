@@ -2,19 +2,19 @@
   <transition name="modal">
     <div class="modal-mask" @keyup.esc="$emit('close')">
       <div class="modal-wrapper">
-        <div class="modal-container" style="height: 120px">
-          <div class="modal-header" style="margin-top:0">
+        <div class="modal-container" style="height:120px">
+          <div class="modal-header" style="height:20%">
             <slot name="header">
               <!--  -->
             </slot>
           </div>
 
-          <div class="modal-content" style="height:50px;margin-top:30px">
+          <div class="modal-content">
             <slot name="content">
             </slot>
           </div>
 
-          <div class="modal-footer" >
+          <div class="modal-footer">
             <slot name="footer">
               <!--  -->
             </slot>
@@ -25,18 +25,8 @@
   </transition>
 </template>
 
-<style scope>
-.closeModalBtn {
-  color: rgb(102, 103, 171);
-  border-style: solid;
-  width: 7.5rem;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 5px;
-  float:right;
-  text-align: center;
-  font-family: 'NanumBaReunHiPi';
-}
+<style lang="css">
+
 .modal-mask {
   position: fixed;
   z-index: 9998;
@@ -56,24 +46,23 @@
 
 .modal-container {
   width: 300px;
+  height: 175px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
-
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .modal-header h3 {
-
+  margin-top: 0;
   color: rgb(102, 103, 171);
 }
 .modal-content {
-  vertical-align: middle;
-  float:none;
+  margin: 0;
 }
-
 .modal-body {
   margin: 20px 0;
 }
