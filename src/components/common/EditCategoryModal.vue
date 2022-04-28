@@ -2,19 +2,19 @@
   <transition name="modal">
     <div class="modal-mask" @keyup.esc="$emit('close')">
       <div class="modal-wrapper">
-        <div class="modal-container">
-          <div class="modal-header">
+        <div class="modal-container" style="height: 120px">
+          <div class="modal-header" style="height:28%" >
             <slot name="header">
               <!--  -->
             </slot>
           </div>
-          <div class="modal-content">
+          <div class="modal-content" style="height:40%">
               <slot name="content">
 
               </slot>
             </div>
 
-          <div class="modal-footer">
+          <div class="modal-footer" >
             <slot name="footer">
               <!--  -->
             </slot>
@@ -25,9 +25,33 @@
   </transition>
 </template>
 
-<style lang="css">
-.closeModalBtn {
+<style scope>
+
+.EditCategoryBtn{
   color: rgb(102, 103, 171);
+  border-style: solid;
+  width: 7.5rem;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 5px;
+  float:left;
+  text-align: center;
+  font-family: 'NanumBaReunHiPi';
+}
+.DeleteCategoryBtn{
+  color: rgb(102, 103, 171);
+  border-style: solid;
+  width: 7.5rem;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 5px;
+  float:right;
+  text-align: center;
+  font-family: 'NanumBaReunHiPi';
+}
+.closeEditModalBtn{
+  color: rgb(102, 103, 171);
+  text-align: left;
 }
 .modal-mask {
   position: fixed;

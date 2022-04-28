@@ -2,18 +2,18 @@
   <transition name="modal">
     <div class="modal-mask" @keyup.esc="$emit('close')">
       <div class="modal-wrapper">
-        <div class="modal-container" style="height: 400px">
-          <div class="modal-header">
+        <div class="modal-container" style="height: 350px">
+          <div class="modal-header" style="height:17%">
             <slot name="header">
               <!--  -->
             </slot>
           </div>
-          <div class="modal-content">
+          <div class="modal-content" style="line-height:230%;width:auto;height:auto">
             <slot name="content">
             </slot>
           </div>
 
-          <div class="modal-footer">
+          <div class="modal-footer" style="" >
             <slot name="footer">
               <!--  -->
             </slot>
@@ -28,7 +28,14 @@
 
 
 
-<style lang="css">
+<style scope>
+
+.categorybox{
+    float:right;
+    font-family: 'NanumBaReunHiPi';
+    vertical-align: middle;
+    height: 30px;
+}
 
 /* 모달창 겉에 배경 */
 .modal-mask {
@@ -56,49 +63,43 @@
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
-  font-family: Helvetica, Arial, sans-serif;
 }
 
 .modal-header {
+  font-family: 'NanumBaReunHiPi';
+  height: 0;
   margin-bottom: 0;
   color: rgb(102, 103, 171);
 }
 
 .modal-content {
-  margin: 0;
-  background-color: #fff;
-}
-
-.modal-footer{
-  background-color: #fff;
+  font-family: 'NanumBaReunHiPi';
 }
 
 
-.modal-default-button {
-  float:right;
-}
-  .saveDetailBtn{
+.saveDetailBtn{
+    font-family: 'NanumBaReunHiPi';
     width: 7.5rem;
     height: 40px;
     line-height: 40px;
     color: rgb(102, 103, 171);
     border-radius: 5px;
-    margin-right: 0;
     float:left;
     border-style: solid;
     text-align: center;
-  }
-  .closeDetailBtn{
+}
+.closeDetailBtn{
+    font-family: 'NanumBaReunHiPi';
     width: 7.5rem;
     height: 40px;
     line-height: 40px;
     color: rgb(102, 103, 171);
     border-radius: 5px;
-    margin-right: auto;
+
     float:right;
     border-style: solid;
     text-align: center;
-  }
+}
 /*
  * The following styles are auto-applied to elements with
  * transition="modal" when their visibility is toggled
@@ -121,4 +122,6 @@
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
+
+    
 </style>

@@ -2,7 +2,7 @@
   <div class="clearAllContainer" >
     <span class="clearAllBtn" @click="showClearModal">Clear All</span>
     <div class="doneleft">
-      할일 {{doneLeft}}개 남았어요!
+      할일 {{doneLeft}}개 남음!
     </div>
     <div class="pageContainer">
       <span class="allBtn">ALL</span>
@@ -13,10 +13,10 @@
     <ClearAlertModal v-if="showClearAlertModal" @close="showClearAlertModal = false">
       <h3 slot="header">경고</h3>
       <span slot="content">정말 삭제하겠습니까?</span>
-      <span slot="footer">
+      <div slot="footer">
         <span class="realCloseBtn"  @click="clearTodo">네</span>
         <span class="noCloseBtn" @click="showClearAlertModal = false">아니요</span>
-      </span>
+      </div>
     </ClearAlertModal> 
   </div>
 
@@ -65,20 +65,22 @@ export default {
 </script>
 
 <style scoped>
+
   .clearAllContainer {
-    background-image: src='../assets/Back_footer.png' ;
     position: fixed;
     bottom:0;
     width:100%;
+    background-color: #F6F6F8;
 
-    height: 150px;
-    line-height: 50px;
+    height: 130px;
+    line-height: 40px;
     border-radius: 5px;
     margin-top: 0;
     float:none;
     
   }
   .pageContainer{
+
     height: 40px;
     line-height:40px;
     margin-top:20px;
@@ -139,4 +141,6 @@ export default {
     margin-top:0;
     padding-bottom:0;
   }
+
+    
 </style>
